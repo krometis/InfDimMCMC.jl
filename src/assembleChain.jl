@@ -38,10 +38,10 @@ function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, 
   ( lpdfThin   < 1 ) && ( lpdfThin   = round(Int,lpdfThin  *nsampAll) );
   ( arThin     < 1 ) && ( arThin     = round(Int,arThin    *nsampAll) );
 
-  println("sampleThin: $(sampleThin)");
-  println("   obsThin: $(obsThin)");
-  println("  lpdfThin: $(lpdfThin)");
-  println("    arThin: $(arThin)");
+  #println("sampleThin: $(sampleThin)");
+  #println("   obsThin: $(obsThin)");
+  #println("  lpdfThin: $(lpdfThin)");
+  #println("    arThin: $(arThin)");
 
   sampIdx  = 1:sampleThin:nsampAll;
   obsIdx   = 1:obsThin:nsampAll;
@@ -98,53 +98,3 @@ function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, 
   
   return samples, obs, lpdfs, ar, files;
 end
-
-# # Assemble a chain split across multiple files
-# function assembleChain(file; verbose=true)
-#   files = [ file ];
-#   origfile = false;
-#   
-#   #get information from first file
-#   f = h5open(file,"r");
-#   nsamp, sampdim = size(f["samples"]);
-#   obsdim         = size(f["obs"],2);
-#   if any(x->x=="restartfile", names(f))
-#     file = read(f,"restartfile");
-#     files = [ file; files ];
-#   else
-#       origfile = true;
-#   end
-#   close(f);
-#   
-#   #find restart files
-#   while !origfile
-#     f = h5open(file,"r");
-#     nsamp += size(f["samples"],1);
-#     if any(x->x=="restartfile", names(f))
-#       file = read(f,"restartfile");
-#       files = [ file; files ];
-#     else
-#       origfile = true;
-#     end
-#     close(f);
-#   end
-#   
-#   samples = zeros(nsamp,sampdim);
-#   obs     = zeros(nsamp,obsdim);
-#   lpdfs   = zeros(nsamp,3);
-#   ar      = zeros(Int64,nsamp);
-#   cnt = 0;
-#   for file in files
-#     sTemp = h5read(file,"samples");
-#     samples[cnt+1:cnt+size(sTemp,1),:] = sTemp;
-#     obs[cnt+1:cnt+size(sTemp,1),:]     = h5read(file,"obs");
-#     lpdfs[cnt+1:cnt+size(sTemp,1),:]   = h5read(file,"lpdfs");
-#     ar[cnt+1:cnt+size(sTemp,1),:]      = h5read(file,"ar");
-#     cnt += size(sTemp,1);
-#     verbose && @printf("Read %d samples from %s\n",size(sTemp,1),file);
-#   end
-#   verbose && @printf("Done. %d total samples found.\n", nsamp);
-#   
-#   return samples, obs, lpdfs, ar, files;
-# end
-
