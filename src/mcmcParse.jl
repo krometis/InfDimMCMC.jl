@@ -11,6 +11,15 @@ function mcmcParse(mcmc::String; delim="|")
     hmc_tau = hmc_e * hmc_I;
     d = Dict("mcmc" => :hmc, "eps"=>hmc_e, "tau"=>hmc_tau);
 
+  elseif mcmcType == "lolhmc"
+    if length(mcmcArray) != 3
+      error("mcmc type $(mcmcType) requires two arguments (step size and # of steps)");
+    end
+    hmc_e   = eval(Meta.parse(mcmcArray[2]));
+    hmc_I   = eval(Meta.parse(mcmcArray[3]));
+    hmc_tau = hmc_e * hmc_I;
+    d = Dict("mcmc" => :lolhmc, "eps"=>hmc_e, "tau"=>hmc_tau);
+
   elseif mcmcType == "mala"
     if length(mcmcArray) != 2
       error("mcmc type $(mcmcType) requires one arguments (step size)");
@@ -30,6 +39,9 @@ function mcmcParse(mcmc::String; delim="|")
       error("mcmc type $(mcmcType) takes no arguments");
     end
     d = Dict("mcmc" => :is);
+
+  else
+    error("mcmc type $(mcmcType) is not supported.");
   end
 
   return d;
