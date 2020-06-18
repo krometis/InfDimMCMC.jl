@@ -4,6 +4,11 @@ function mcmcSetSampler(mcmcP::mcmcProb,d::Dict)
     mcmcP.step = ( (cur,m;verbose=0) -> stepHmc(cur, m, d["eps"],d["tau"]; verbose=verbose) );
     mcmcP.computeGradients = true;
 
+  elseif d["mcmc"] == :lolhmc 
+    println("Setting sampler to LOL-HMC (step size=$(d["eps"]), integration time=$(d["tau"]))");
+    mcmcP.step = ( (cur,m;verbose=0) -> stepLolHmc(cur, m, d["eps"],d["tau"]; verbose=verbose) );
+    mcmcP.computeGradients = true;
+
   elseif d["mcmc"] == :mala
     println("Setting sampler to MALA (step size=$(d["h"]))");
     mcmcP.step = ( (cur,m;verbose=0) -> stepMala(cur, m, d["h"]; verbose=verbose) );

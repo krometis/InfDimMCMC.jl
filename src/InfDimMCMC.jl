@@ -13,6 +13,7 @@ export stepIndependence
 export stepPcn
 export stepMala
 export stepHmc
+export stepLolHmc
 
 export mcmcFillSample
 export mcmcRun
@@ -40,6 +41,7 @@ include("mcmcInd.jl");
 include("mcmcPcn.jl");
 include("mcmcMala.jl");
 include("mcmcHmc.jl");
+include("mcmcLolHmc.jl");
 
 include("mcmcFillSample.jl");
 include("mcmcRun.jl");
