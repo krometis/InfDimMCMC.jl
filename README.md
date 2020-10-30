@@ -4,20 +4,20 @@ Julia package for MCMC algorithms well-defined for infinite-dimensional unknowns
 To run, 
 
 1. Setup the MCMC problem via the `mcmcProb` structure:
-- The number of samples: `nsamp`
-- The number of burnin samples: `nburn`
-- The prior measure (from the Distributions package): `prior`
-- The MCMC method: `step` (typically set with `mcmcSetSampler()`)
+  - The number of samples: `nsamp`
+  - The number of burnin samples: `nburn`
+  - The prior measure (from the Distributions package): `prior`
+  - The MCMC method: `step` (typically set with `mcmcSetSampler()`)
 
 2. Define the following functions:
-- Sample to model parameter map: `InfDimMCMC.mcmcSampToParamMap`
-- Parameter to solution map: `InfDimMCMC.mcmcForwardMap`
-- Solution to observation map: `InfDimMCMC.mcmcObsMap`
-- Observation to potential map: `InfDimMCMC.mcmcPotMap`
-- Gradient of the sample to model paramter map: `InfDimMCMC.mcmcGradSampToParamMap`
-- Gradient of the parameter to solution map: `InfDimMCMC.mcmcGradForwardMap`
-- Gradient of the solution to observation map: `InfDimMCMC.mcmcGradObsMap`
-- Gradient of the observation to potential map: `InfDimMCMC.mcmcGradPotMap`
+  - Sample to model parameter map: `InfDimMCMC.mcmcSampToParamMap`
+  - Parameter to solution map: `InfDimMCMC.mcmcForwardMap`
+  - Solution to observation map: `InfDimMCMC.mcmcObsMap`
+  - Observation to potential map: `InfDimMCMC.mcmcPotMap`
+  - Gradient of the sample to model paramter map: `InfDimMCMC.mcmcGradSampToParamMap`
+  - Gradient of the parameter to solution map: `InfDimMCMC.mcmcGradForwardMap`
+  - Gradient of the solution to observation map: `InfDimMCMC.mcmcGradObsMap`
+  - Gradient of the observation to potential map: `InfDimMCMC.mcmcGradPotMap`
 
   For many problems one or more of these maps may be unnecessary, so the observation to potential map is the only one that must be defined; the sample to parameter map, the parameter to solution map, and the solution to observation map are each assumed to be the identity unless otherwise specified. 
 
