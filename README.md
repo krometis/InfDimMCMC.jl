@@ -26,6 +26,8 @@ To run,
 A simple example is therefore (see `test/normal2D.jl`):
 
 ```
+using InfDimMCMC, Distributions
+
 m = mcmcProb();
 m.nsamp=10;                        #samples
 m.nburn=0;                         #burnin
@@ -36,7 +38,6 @@ m.prior = MvNormal(meanPrior,1.0); #prior
 meanLlh   = -ones(2);
 InfDimMCMC.mcmcPotMap(s) = -logpdf( MvNormal(meanLlh,1.0), s.samp );
 InfDimMCMC.mcmcGradPotMap(s) = (s.samp-meanLlh);
-
 
 #Set the sampler
 smplr = "hmc|0.5|2"; #HMC sampler with step size 0.5 and 2 internal steps
