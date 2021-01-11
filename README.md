@@ -14,7 +14,7 @@ To run,
   - Parameter to solution map: `InfDimMCMC.mcmcForwardMap`
   - Solution to observation map: `InfDimMCMC.mcmcObsMap`
   - Observation to potential map: `InfDimMCMC.mcmcPotMap`
-  - Gradient of the sample to model paramter map: `InfDimMCMC.mcmcGradSampToParamMap`
+  - Gradient of the sample to model parameter map: `InfDimMCMC.mcmcGradSampToParamMap`
   - Gradient of the parameter to solution map: `InfDimMCMC.mcmcGradForwardMap`
   - Gradient of the solution to observation map: `InfDimMCMC.mcmcGradObsMap`
   - Gradient of the observation to potential map: `InfDimMCMC.mcmcGradPotMap`
