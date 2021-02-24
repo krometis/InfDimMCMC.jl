@@ -17,10 +17,12 @@ function mcmcSetSampler(mcmcP::mcmcProb,d::Dict)
   elseif d["mcmc"] == :pcn
     println("Setting sampler to pCN (step size=$(d["beta"]))");
     mcmcP.step = ( (cur,m;verbose=0) -> stepPcn(cur, m, d["beta"]; verbose=verbose) );
+    mcmcP.computeGradients = false;
 
   elseif d["mcmc"] == :is
     println("Setting sampler to IS");
     mcmcP.step = stepIS;
+    mcmcP.computeGradients = false;
   end
 end
 
