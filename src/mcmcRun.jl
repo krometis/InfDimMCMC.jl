@@ -1,4 +1,4 @@
-function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10)
+function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1)
 
   #number of iterations to keep in memory between checkpoints
   checkpoint = (outFile != "none");
@@ -97,18 +97,16 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
   end #end iteration
   (verbose>0) && @printf("\n------------Sampling Complete------------\n");
 
-  ##close output file
-  #if checkpoint
-  #  close(f);
-  #end
+  #flush stdout if ns is a multiple of samplesFlush
+  ( ns % samplesFlush == 0 ) && flush(stdout);
 
   return samples, obs, lpdfs, ar;
 end
 
-function mcmcRun(mcmcP::mcmcProb, s0=rand(mcmcP.prior); verbose=0, outFile="none", ncheck=10)
+function mcmcRun(mcmcP::mcmcProb, s0=rand(mcmcP.prior); verbose=0, outFile="none", ncheck=10, samplesFlush=1)
   #initialize
   cur = mcmcSample();
   cur.samp = s0;
 
-  return mcmcRun(mcmcP, cur; verbose=verbose, outFile=outFile, ncheck=ncheck);
+  return mcmcRun(mcmcP, cur; verbose=verbose, outFile=outFile, ncheck=ncheck, samplesFlush=samplesFlush);
 end
