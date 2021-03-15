@@ -58,7 +58,7 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
 
       ##create datasets on first checkpoint
       #if ( ns == nSampMem || ns == mcmcP.nsamp )
-      if !exists(f, "samples")
+      if !haskey(f, "samples")
         f_samples = d_create(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), "chunk", (nSampMem,size(samples,2)));
         f_ar      = d_create(f, "ar", datatype(eltype(ar)), ((nSampMem,),(mcmcP.nsamp,)), "chunk", (nSampMem,));
         f_obs     = d_create(f, "obs", datatype(eltype(obs)), (size(obs),(mcmcP.nsamp,size(obs,2))), "chunk", (nSampMem,size(obs,2)));
