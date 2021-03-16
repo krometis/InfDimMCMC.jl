@@ -59,10 +59,14 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
       ##create datasets on first checkpoint
       #if ( ns == nSampMem || ns == mcmcP.nsamp )
       if !haskey(f, "samples")
-        f_samples = d_create(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), "chunk", (nSampMem,size(samples,2)));
-        f_ar      = d_create(f, "ar", datatype(eltype(ar)), ((nSampMem,),(mcmcP.nsamp,)), "chunk", (nSampMem,));
-        f_obs     = d_create(f, "obs", datatype(eltype(obs)), (size(obs),(mcmcP.nsamp,size(obs,2))), "chunk", (nSampMem,size(obs,2)));
-        f_lpdfs   = d_create(f, "lpdfs", datatype(eltype(lpdfs)), ((nSampMem,3),(mcmcP.nsamp,3)), "chunk", (nSampMem,3));
+        #f_samples = d_create(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), "chunk", (nSampMem,size(samples,2)));
+        #f_ar      = d_create(f, "ar", datatype(eltype(ar)), ((nSampMem,),(mcmcP.nsamp,)), "chunk", (nSampMem,));
+        #f_obs     = d_create(f, "obs", datatype(eltype(obs)), (size(obs),(mcmcP.nsamp,size(obs,2))), "chunk", (nSampMem,size(obs,2)));
+        #f_lpdfs   = d_create(f, "lpdfs", datatype(eltype(lpdfs)), ((nSampMem,3),(mcmcP.nsamp,3)), "chunk", (nSampMem,3));
+        f_samples = create_dataset(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), chunk=(nSampMem,size(samples,2)));
+        f_ar      = create_dataset(f, "ar",      datatype(eltype(ar)),      ((nSampMem,),  (mcmcP.nsamp,)), chunk=(nSampMem,));
+        f_obs     = create_dataset(f, "obs",     datatype(eltype(obs)),     (size(obs),    (mcmcP.nsamp,size(obs,2))), chunk=(nSampMem,size(obs,2)));
+        f_lpdfs   = create_dataset(f, "lpdfs",   datatype(eltype(lpdfs)),   ((nSampMem,3), (mcmcP.nsamp,3)), chunk=(nSampMem,3));
         write(f,"sampComplete",ns);
       
       #resize on subsequent checkpoints
@@ -73,10 +77,10 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
         f_lpdfs   = f["lpdfs"];
 
         #resize
-        set_dims!(f_samples,(ns,size(samples,2)));
-        set_dims!(f_ar,(ns,));
-        set_dims!(f_obs,(ns,size(obs,2)));
-        set_dims!(f_lpdfs,(ns,3));
+        HDF5.set_extent_dims(f_samples,(ns,size(samples,2)));
+        HDF5.set_extent_dims(f_ar,(ns,));
+        HDF5.set_extent_dims(f_obs,(ns,size(obs,2)));
+        HDF5.set_extent_dims(f_lpdfs,(ns,3));
       end
 
       #save values
