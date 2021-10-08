@@ -33,18 +33,6 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
     end
   end
 
-  ##Write data to HDF5 archive (unless user specified "none")
-  #if checkpoint
-  #  prot = isfile(outFile) ? "r+" : "w";
-  #  f = h5open(outFile, prot);  #Open HDF5 file for writing
-
-  #  f_samples = d_create(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), "chunk", (nSampMem,size(samples,2)));
-  #  f_ar = d_create(f, "ar", datatype(eltype(ar)), ((nSampMem,),(mcmcP.nsamp,)), "chunk", (nSampMem,));
-  #  f_obs = d_create(f, "obs", datatype(eltype(obs)), (size(obs),(mcmcP.nsamp,size(obs,2))), "chunk", (nSampMem,size(obs,2)));
-  #  f_lpdfs = d_create(f, "lpdfs", datatype(eltype(lpdfs)), ((nSampMem,3),(mcmcP.nsamp,3)), "chunk", (nSampMem,3));
-  #end
-
-  #(verbose>0) && @printf "\n------------Starting Metropolis-Hastings Sampling------------\n"
   (verbose>0) && @printf("\n----------------------Starting Sampling-----------------------\n");
   ns = 1; #total number of samples
   i  = 1; #samples since last checkpoint
@@ -57,21 +45,20 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
     lpdfs[i,2]   = cur.llLogPdf;
     lpdfs[i,3]   = cur.postLogPdf;
 
+    #adapt
+    if targetAR && (i % sampAdapt == 0)
+      mcmcAdapt(mcmcP,mean(ar[i-sampAdapt+1:i]),targetAR;verbose=1);
+    end
+
     #checkpoint
     if checkpoint && ( i == nSampMem || ns == mcmcP.nsamp )
       (verbose>0) && @printf("\n---- Saving checkpoint at Sample %d (%d samples to save) ----\n",ns,i);
 
-      #prot = isfile(outFile) ? "r+" : "w";
-      #f = h5open(outFile, prot);  #Open HDF5 file for writing
       f = h5open(outFile, "cw");  #Open HDF5 file for writing
 
       ##create datasets on first checkpoint
       #if ( ns == nSampMem || ns == mcmcP.nsamp )
       if !haskey(f, "samples")
-        #f_samples = d_create(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), "chunk", (nSampMem,size(samples,2)));
-        #f_ar      = d_create(f, "ar", datatype(eltype(ar)), ((nSampMem,),(mcmcP.nsamp,)), "chunk", (nSampMem,));
-        #f_obs     = d_create(f, "obs", datatype(eltype(obs)), (size(obs),(mcmcP.nsamp,size(obs,2))), "chunk", (nSampMem,size(obs,2)));
-        #f_lpdfs   = d_create(f, "lpdfs", datatype(eltype(lpdfs)), ((nSampMem,3),(mcmcP.nsamp,3)), "chunk", (nSampMem,3));
         f_samples = create_dataset(f, "samples", datatype(eltype(samples)), (size(samples),(mcmcP.nsamp,size(samples,2))), chunk=(nSampMem,size(samples,2)));
         f_ar      = create_dataset(f, "ar",      datatype(eltype(ar)),      ((nSampMem,),  (mcmcP.nsamp,)), chunk=(nSampMem,));
         f_obs     = create_dataset(f, "obs",     datatype(eltype(obs)),     (size(obs),    (mcmcP.nsamp,size(obs,2))), chunk=(nSampMem,size(obs,2)));

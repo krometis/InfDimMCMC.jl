@@ -21,6 +21,8 @@ export mcmcRun
 export mcmcSetSampler
 export mcmcParse
 
+export mcmcAdapt
+
 #function stubs
 export mcmcSampToParamMap
 export mcmcGradSampToParamMap
@@ -49,6 +51,8 @@ include("mhAcceptReject.jl");
 
 include("mcmcParse.jl");
 include("mcmcSetSampler.jl");
+
+include("mcmcAdapt.jl");
 
 #contains a variety of function stubs
 include("mcmcStubs.jl");
