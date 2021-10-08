@@ -1,4 +1,4 @@
-function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=0.0, sampAdapt=round(Int64,mcmcP.nsamp/100))
+function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=0.0, sampAdapt=max(1,round(Int64,mcmcP.nsamp/100)))
 
   #number of iterations to keep in memory between checkpoints
   checkpoint = (outFile != "none");

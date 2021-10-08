@@ -1,7 +1,7 @@
 #mcmcAdapt: adjust MCMC parameters (e.g., step size) to target a particular accept/reject ratio
 function mcmcAdapt(mcmcP::mcmcProb, acceptRatio::Float64, targetAR::Float64; verbose=0, minAdapt=0.5, maxAdapt=2.0)
 
-  adaptRatio = targetAR / acceptRatio;
+  adaptRatio = acceptRatio / targetAR;
   adaptRatio = min(adaptRatio,maxAdapt);
   adaptRatio = max(adaptRatio,minAdapt);
 
