@@ -41,6 +41,7 @@ mutable struct mcmcProb
   #proposalKernel   #Proposal kernel
   #acceptReject     #Accept/reject method
 
+  mcmc::Dict       #Dictionary describing the MCMC method
   step             #Function to run one MCMC step
 
   mcmcProb() = new()

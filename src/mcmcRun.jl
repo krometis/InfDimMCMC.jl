@@ -1,4 +1,4 @@
-function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1)
+function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=false, sampAdapt=round(Int64,mcmcP.nsamp/100))
 
   #number of iterations to keep in memory between checkpoints
   checkpoint = (outFile != "none");
@@ -19,9 +19,18 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
 
   #burnin
   (verbose>0) && @printf("\n-----------------------Starting Burn In-----------------------\n");
+  accCnt  = 0;
+  sampCnt = 0;
   for i=1:mcmcP.nburn
     (verbose>0) && @printf("\nBurn in Step #%d:\n",i);
-    cur,_,_ = mcmcP.step(cur, mcmcP; verbose=verbose);
+    cur,accept,_ = mcmcP.step(cur, mcmcP; verbose=verbose);
+    accCnt  += accept;
+    sampCnt += 1;
+    if targetAR && (i % sampAdapt == 0)
+      mcmcAdapt(mcmcP,accCnt/sampCnt,targetAR;verbose=1);
+      accCnt  = 0;
+      sampCnt = 0;
+    end
   end
 
   ##Write data to HDF5 archive (unless user specified "none")
