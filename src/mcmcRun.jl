@@ -1,4 +1,4 @@
-function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=false, sampAdapt=round(Int64,mcmcP.nsamp/100))
+function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=0.0, sampAdapt=round(Int64,mcmcP.nsamp/100))
 
   #number of iterations to keep in memory between checkpoints
   checkpoint = (outFile != "none");
@@ -26,7 +26,7 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
     cur,accept,_ = mcmcP.step(cur, mcmcP; verbose=verbose);
     accCnt  += accept;
     sampCnt += 1;
-    if targetAR && (i % sampAdapt == 0)
+    if (targetAR > 0.0) && (i % sampAdapt == 0)
       mcmcAdapt(mcmcP,accCnt/sampCnt,targetAR;verbose=1);
       accCnt  = 0;
       sampCnt = 0;
@@ -46,7 +46,7 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
     lpdfs[i,3]   = cur.postLogPdf;
 
     #adapt
-    if targetAR && (i % sampAdapt == 0)
+    if (targetAR > 0.0) && (i % sampAdapt == 0)
       mcmcAdapt(mcmcP,mean(ar[i-sampAdapt+1:i]),targetAR;verbose=1);
     end
 
@@ -103,10 +103,11 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
   return samples, obs, lpdfs, ar;
 end
 
-function mcmcRun(mcmcP::mcmcProb, s0=rand(mcmcP.prior); verbose=0, outFile="none", ncheck=10, samplesFlush=1)
+#function mcmcRun(mcmcP::mcmcProb, s0=rand(mcmcP.prior); verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=false, sampAdapt=round(Int64,mcmcP.nsamp/100))
+function mcmcRun(mcmcP::mcmcProb, s0=rand(mcmcP.prior); kwargs...)
   #initialize
   cur = mcmcSample();
   cur.samp = s0;
 
-  return mcmcRun(mcmcP, cur; verbose=verbose, outFile=outFile, ncheck=ncheck, samplesFlush=samplesFlush);
+  return mcmcRun(mcmcP, cur; kwargs...);
 end
