@@ -23,6 +23,12 @@ function mcmcSetSampler(mcmcP::mcmcProb,d::Dict;verbose=1)
     mcmcP.mcmc = d;
     mcmcP.computeGradients = false;
 
+  elseif d["mcmc"] == :mppcn
+    (verbose > 0) && println("Setting sampler to multi-proposal pCN (step size=$(d["beta"]), # proposals=$(d["nprop"]))");
+    mcmcP.step = ( (cur,m;verbose=0) -> stepPcn(cur, m, d["beta"], d["nprop"]; verbose=verbose) );
+    mcmcP.mcmc = d;
+    mcmcP.computeGradients = false;
+
   elseif d["mcmc"] == :is
     (verbose > 0) && println("Setting sampler to IS");
     mcmcP.step = stepIS;
