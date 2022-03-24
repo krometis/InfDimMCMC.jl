@@ -40,7 +40,7 @@ function mcmcParse(mcmc::String; delim="|")
     end
     pcn_beta  = eval(Meta.parse(mcmcArray[2]));
     pcn_nprop = eval(Meta.parse(mcmcArray[3]));
-    d = Dict("mcmc" => :pcn, "beta"=>pcn_beta, "nprop"=>pcn_nprop);
+    d = Dict("mcmc" => :mppcn, "beta"=>pcn_beta, "nprop"=>pcn_nprop);
   
   elseif mcmcType == "ind" || mcmcType == "is"
     if length(mcmcArray) != 1

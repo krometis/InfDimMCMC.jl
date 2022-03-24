@@ -68,5 +68,6 @@ mcmcTest(s0,m,"is");
 mcmcTest(s0,m,"pcn|0.5");
 mcmcTest(s0,m,"mala|0.5");
 mcmcTest(s0,m,"hmc|0.5|2");
+mcmcTest(s0,m,"mppcn|0.5|32");
 
 @printf("\n -----  END: 1D NORMAL ----- \n");

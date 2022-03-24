@@ -5,10 +5,10 @@
 
 
 #run a step of the sampler
-function stepMcPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; verbose=0,recompute=true)
+function stepMpPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; verbose=3,recompute=true)
   #preallocate proposals and potentials
   proposals = zeros(length(cur.samp),nProp+1);
-  pots      = zeros(nProp);
+  pots      = zeros(nProp+1);
 
   #copy current value into last entry
   proposals[:,end] = cur.samp;
@@ -35,7 +35,9 @@ function stepMcPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
   #pick a sample based on acceptance probabilities
   choice = sample(1:length(weights),Weights(weights));
 
-  can.samp = samples[choice];
+  (verbose>2) && @printf("mp-pCN: Selected sample %d out of %d with potential %10.6f (potential range was %10.6f to %10.6f\n", choice, length(pots), pots[choice], minimum(pots), maximum(pots));
+
+  can.samp = proposals[:,choice];
   if recompute
     #recompute everything - inefficient if expensive
     mcmcFillSample( can, m ; computeGradients=false);
