@@ -4,6 +4,7 @@ using Distributions
 using Printf
 using LinearAlgebra
 using Statistics
+using StatsBase
 using HDF5
 
 export mcmcProb
@@ -11,6 +12,7 @@ export mcmcSample
 
 export stepIndependence
 export stepPcn
+export stepMpPcn
 export stepMala
 export stepHmc
 export stepLolHmc
@@ -41,6 +43,7 @@ include("mcmcProb.jl");
 
 include("mcmcInd.jl");
 include("mcmcPcn.jl");
+include("mcmcMpPcn.jl");
 include("mcmcMala.jl");
 include("mcmcHmc.jl");
 include("mcmcLolHmc.jl");

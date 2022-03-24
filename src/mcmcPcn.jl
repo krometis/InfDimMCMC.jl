@@ -6,6 +6,10 @@
 
 #Proposal kernel for pCN MCMC method
 function mcmcCandidatePcn(cur::mcmcSample,m::mcmcProb,beta::Float64)
+  return mcmcCandidatePcn(cur.samp,m,beta);
+end
+
+function mcmcCandidatePcn(sample::AbstractArray,m::mcmcProb,beta::Float64)
   ##vk = sqrt(1-beta^2)*cur.samp + beta*mu0tovk(mu0samp());
   ##For Gaussian not centered at 0, need to convert uk to a mu0 sample, pull out the mean, do the update, re-add the mean, and convert to vk
   #xij = sqrt(1-beta^2)*vktomu0(cur.samp) + beta*mu0samp() - (beta + sqrt(1-beta^2))*mu0_mean;
@@ -15,7 +19,7 @@ function mcmcCandidatePcn(cur::mcmcSample,m::mcmcProb,beta::Float64)
   mu0_mean=mean(mu0);
   xi = rand(mu0);
 
-  return ( sqrt(1-beta^2)*(cur.samp-mu0_mean) + beta*xi + (1-beta)*mu0_mean );
+  return ( sqrt(1-beta^2)*(sample-mu0_mean) + beta*xi + (1-beta)*mu0_mean );
 end
 
 #Acceptance probability for pCN MCMC method
