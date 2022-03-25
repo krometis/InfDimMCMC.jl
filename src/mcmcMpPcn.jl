@@ -34,6 +34,7 @@ function stepMpPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
 
   #pick a sample based on acceptance probabilities
   choice = sample(1:length(weights),Weights(weights));
+  accept = ( choice != length(pots) );
 
   (verbose>2) && @printf("mp-pCN: Selected sample %d out of %d with potential %10.6f (potential range was %10.6f to %10.6f\n", choice, length(pots), pots[choice], minimum(pots), maximum(pots));
 
@@ -46,6 +47,6 @@ function stepMpPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
     can.pot = pots[choice];
   end
 
-  #return new sample, accepted index, and potentials
-  return can, choice, pots;
+  #return new sample, accept, and potentials
+  return can, accept, pots;
 end
