@@ -22,6 +22,7 @@ function mcmcTest(cur,m::mcmcProb,smplr::String; meanLlh=meanLlh, meanThresh=mea
   mcmcSetSampler(m,smplr);
   #m.step = mcmcStep;
   samples, obs, lpdfs, ar = mcmcRun(m,s0;outFile=outFile,verbose=0);
+  #samples, obs, lpdfs, ar = mcmcRun(m,s0;outFile=outFile,verbose=1,targetAR=0.5); #test adaptivity, breaks on is
 
   @printf("Acceptance ratio: %6.4f\n",mean(ar));
   

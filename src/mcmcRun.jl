@@ -1,4 +1,4 @@
-function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=0.0, sampAdapt=max(1,round(Int64,mcmcP.nsamp/100)))
+function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", ncheck=10, samplesFlush=1, targetAR=0.0, sampAdapt=max(1,round(Int64,mcmcP.nsamp/100)),maxAdapt=((x)->(2-x)))
 
   #number of iterations to keep in memory between checkpoints
   checkpoint = (outFile != "none");
@@ -22,7 +22,7 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
   accCnt  = 0;
   sampCnt = 0;
   for i=1:mcmcP.nburn
-    (verbose>0) && @printf("\nBurn in Step #%d:\n",i);
+    (verbose>1) && @printf("\nBurn in Step #%d:\n",i);
     cur,accept,_ = mcmcP.step(cur, mcmcP; verbose=verbose);
     accCnt  += accept;
     sampCnt += 1;
@@ -46,8 +46,8 @@ function mcmcRun(mcmcP::mcmcProb, cur::mcmcSample; verbose=0, outFile="none", nc
     lpdfs[i,3]   = cur.postLogPdf;
 
     #adapt
-    if (targetAR > 0.0) && (i % sampAdapt == 0)
-      mcmcAdapt(mcmcP,mean(ar[i-sampAdapt+1:i]),targetAR;verbose=1);
+    if (targetAR > 0.0) && (ns % sampAdapt == 0)
+      mcmcAdapt(mcmcP,mean(ar[i-sampAdapt+1:i]),targetAR;verbose=1,maxAdapt=maxAdapt(ns/mcmcP.nsamp));
     end
 
     #checkpoint
