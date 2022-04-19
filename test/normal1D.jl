@@ -5,7 +5,7 @@ using Statistics
 using LinearAlgebra
 using HDF5
 
-meanPrior=[-1.0];
+meanPrior=[ 0.0];
 meanLlh  =[ 2.0];
 nsamp=1e5;
 meanThresh = 0.05;
@@ -69,5 +69,6 @@ mcmcTest(s0,m,"pcn|0.5");
 mcmcTest(s0,m,"mala|0.5");
 mcmcTest(s0,m,"hmc|0.5|2");
 mcmcTest(s0,m,"mppcn|0.5|32");
+#mcmcTest(s0,m,"bbpcn|0.5|32"); #this will produce the wrong answer, failing the test
 
 @printf("\n -----  END: 1D NORMAL ----- \n");

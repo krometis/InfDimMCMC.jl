@@ -29,6 +29,12 @@ function mcmcSetSampler(mcmcP::mcmcProb,d::Dict;verbose=1)
     mcmcP.mcmc = d;
     mcmcP.computeGradients = false;
 
+  elseif d["mcmc"] == :bbpcn
+    (verbose > 0) && println("Setting sampler to Bubble Bath pCN (step size=$(d["beta"]), proposals=$(d["nprop"]))");
+    mcmcP.step = ( (cur,m;verbose=0) -> stepBbPcn(cur, m, d["beta"], d["nprop"]; verbose=verbose) );
+    mcmcP.mcmc = d;
+    mcmcP.computeGradients = false;
+
   elseif d["mcmc"] == :is
     (verbose > 0) && println("Setting sampler to IS");
     mcmcP.step = stepIS;

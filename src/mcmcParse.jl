@@ -42,6 +42,14 @@ function mcmcParse(mcmc::String; delim="|")
     pcn_nprop = eval(Meta.parse(mcmcArray[3]));
     d = Dict("mcmc" => :mppcn, "beta"=>pcn_beta, "nprop"=>pcn_nprop);
   
+  elseif mcmcType == "bbpcn"
+    if length(mcmcArray) != 3
+      error("mcmc type $(mcmcType) requires two arguments (step size, # of proposals)");
+    end
+    pcn_beta  = eval(Meta.parse(mcmcArray[2]));
+    pcn_nprop = eval(Meta.parse(mcmcArray[3]));
+    d = Dict("mcmc" => :bbpcn, "beta"=>pcn_beta, "nprop"=>pcn_nprop);
+  
   elseif mcmcType == "ind" || mcmcType == "is"
     if length(mcmcArray) != 1
       error("mcmc type $(mcmcType) takes no arguments");

@@ -1,10 +1,10 @@
-#Methods for the multi-proposal preconditioned Crank-Nicolson (pCN) MCMC method 
+#Methods for the "bubble bath" preconditioned Crank-Nicolson (pCN) MCMC method 
 #See:
 # Cotter et al, 2013
 # Dashti-Stuart, 2017, Algorithm 3
 
 
-#stepMpPcn(): Run a step of the sampler
+#stepBbPcn(): Run a step of the sampler
 #Parameters:
 # cur         Structure containing current sample
 # m           Structure describing MCMC problem (need the prior from this)
@@ -13,7 +13,7 @@
 # verbose     How much information to print about each step (optional)
 # recompute   Whether to recompute all information about the selected sample at the end (optional)
 #
-function stepMpPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; verbose=3,recompute=true)
+function stepBbPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; verbose=3,recompute=true)
   #preallocate proposals and potentials
   proposals = zeros(length(cur.samp),nProp+1);
   pots      = zeros(nProp+1);
@@ -22,13 +22,14 @@ function stepMpPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
   proposals[:,end] = cur.samp;
   pots[end]        = cur.pot;
 
-  #midpoint of proposals
-  mdpt = mcmcCandidatePcn(cur,m,beta);
+  # #midpoint of proposals
+  # mdpt = mcmcCandidatePcn(cur,m,beta);
 
   #create all proposals
   can = mcmcSample(); #candidate
   for p=1:nProp
-    can.samp = mcmcCandidatePcn(mdpt,m,beta);          #sample
+    #can.samp = mcmcCandidatePcn(mdpt,m,beta);          #sample
+    can.samp = mcmcCandidatePcn(cur.samp,m,beta);      #sample
     mcmcFillSample( can, m ; computeGradients=false);  #compute potential
     proposals[:,p] = can.samp; #add sample to list
     pots[p]        = can.pot;  #add potential to list
@@ -50,7 +51,7 @@ function stepMpPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
   choice = sample(1:length(wgts),Weights(wgts));
   accept = ( choice != length(pots) );
 
-  (verbose>2) && @printf("mp-pCN: Selected sample %d out of %d with potential %10.6f (potential range was %10.6f to %10.6f)\n", choice, length(pots), pots[choice], minimum(pots), maximum(pots));
+  (verbose>2) && @printf("bb-pCN: Selected sample %d out of %d with potential %10.6f (potential range was %10.6f to %10.6f)\n", choice, length(pots), pots[choice], minimum(pots), maximum(pots));
 
   can.samp = proposals[:,choice];
   if recompute
