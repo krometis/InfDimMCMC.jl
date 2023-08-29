@@ -10,7 +10,7 @@ function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, 
   sampdim = length((1:sampdim)[sampleCols]);
   obsdim  = size(f["obs"],2);
   obsdim  = length((1:obsdim)[obsCols]);
-  if any(x->x=="restartfile", names(f))
+  if haskey(f,"restartfile")
     file = read(f,"restartfile");
     files = [ file; files ];
   else
@@ -23,7 +23,7 @@ function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, 
     f = h5open(file,"r");
     nsampTmp = size(f["samples"],1);
     nsampAll += nsampTmp;
-    if any(x->x=="restartfile", names(f))
+    if haskey(f,"restartfile")
       file = read(f,"restartfile");
       files = [ file; files ];
     else
