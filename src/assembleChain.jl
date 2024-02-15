@@ -1,17 +1,17 @@
 # Assemble a chain split across multiple files
-function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, sampleThin=1, obsThin=sampleThin, lpdfThin=sampleThin, arThin=sampleThin)
+function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, sampleThin=1, obsThin=sampleThin, lpdfThin=sampleThin, arThin=sampleThin, restartKey="restartfile", sampleKey="samples", obsKey="obs", lpdfsKey="lpdfs")
   files = [ file ];
   origfile = false;
   
   #get information from first file
   f = h5open(file,"r");
-  nsampAll, sampdim = size(f["samples"]);
+  nsampAll, sampdim = size(f[sampleKey]);
 
   sampdim = length((1:sampdim)[sampleCols]);
-  obsdim  = size(f["obs"],2);
+  obsdim  = size(f[obsKey],2);
   obsdim  = length((1:obsdim)[obsCols]);
-  if haskey(f,"restartfile")
-    file = read(f,"restartfile");
+  if haskey(f,restartKey)
+    file = read(f,restartKey);
     files = [ file; files ];
   else
       origfile = true;
@@ -21,10 +21,10 @@ function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, 
   #find restart files
   while !origfile
     f = h5open(file,"r");
-    nsampTmp = size(f["samples"],1);
+    nsampTmp = size(f[sampleKey],1);
     nsampAll += nsampTmp;
-    if haskey(f,"restartfile")
-      file = read(f,"restartfile");
+    if haskey(f,restartKey)
+      file = read(f,restartKey);
       files = [ file; files ];
     else
       origfile = true;
@@ -63,24 +63,24 @@ function assembleChain(file; verbose=true, sampleCols=:, obsCols=:, lpdfCols=:, 
     f = h5open(file,"r");
 
     #read samples
-    n  = size(f["samples"],1);
+    n  = size(f[sampleKey],1);
     sampIdxFl = sampIdx[sampCnt+1]-sampCntAll:sampleThin:n;
     nsampFl = length(sampIdxFl);
-    samples[sampCnt+1:sampCnt+nsampFl,:] = f["samples"][sampIdxFl,sampleCols];
+    samples[sampCnt+1:sampCnt+nsampFl,:] = f[sampleKey][sampIdxFl,sampleCols];
     sampCnt += nsampFl;
     sampCntAll += n;
 
     #read obs
     obsIdxFl = obsIdx[obsCnt+1]-obsCntAll:obsThin:n;
     nobsFl = length(obsIdxFl);
-    obs[obsCnt+1:obsCnt+nobsFl,:] = f["obs"][obsIdxFl,obsCols];
+    obs[obsCnt+1:obsCnt+nobsFl,:] = f[obsKey][obsIdxFl,obsCols];
     obsCnt += nobsFl;
     obsCntAll += n;
 
     #read lpdf
     lpdfIdxFl = lpdfIdx[lpdfCnt+1]-lpdfCntAll:lpdfThin:n;
     nlpdfFl = length(lpdfIdxFl);
-    lpdfs[lpdfCnt+1:lpdfCnt+nlpdfFl,:] = f["lpdfs"][lpdfIdxFl,lpdfCols];
+    lpdfs[lpdfCnt+1:lpdfCnt+nlpdfFl,:] = f[lpdfsKey][lpdfIdxFl,lpdfCols];
     lpdfCnt += nlpdfFl;
     lpdfCntAll += n;
 
