@@ -14,6 +14,7 @@ export stepIndependence
 export stepPcn
 export stepMpPcn
 export stepBbPcn
+export stepSsPcn
 export stepMala
 export stepHmc
 export stepLolHmc
@@ -46,6 +47,7 @@ include("mcmcInd.jl");
 include("mcmcPcn.jl");
 include("mcmcMpPcn.jl");
 include("mcmcBbPcn.jl");
+include("mcmcSsPcn.jl");
 include("mcmcMala.jl");
 include("mcmcHmc.jl");
 include("mcmcLolHmc.jl");
