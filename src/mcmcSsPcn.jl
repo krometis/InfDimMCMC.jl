@@ -37,7 +37,7 @@ function stepSsPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
   #copy current value into last entry
   proposals[:,end] = cur.samp;
   pots[end]        = cur.pot;
-  propPots[end]    = -logpdf(m.prior,cur.samp-cur.samp);
+  propPots[end]    = -logpdf(m.prior,zeros(length(cur.samp)));
 
   #create all proposals
   can = mcmcSample(); #candidate
@@ -46,7 +46,9 @@ function stepSsPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
     mcmcFillSample( can, m ; computeGradients=false);  #compute potential
     proposals[:,p] = can.samp; #add sample to list
     pots[p]        = can.pot;  #add potential to list
+    (verbose>3) && @printf("  ss-pCN: Sample %d out of %d has potential %g and proposal potential %g (weight=%g)\n", p, length(pots), pots[p], propPots[p], exp(propPots[p]-pots[p]));
   end
+  (verbose>3) && @printf("  ss-pCN: Sample %d out of %d has potential %g and proposal potential %g (weight=%g)\n", length(pots), length(pots), pots[end], propPots[end], exp(propPots[end]-pots[end]));
 
   #acceptance probabilities 
   #(unnormalized) acceptance probabilities 
