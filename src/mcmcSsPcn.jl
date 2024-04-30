@@ -37,7 +37,11 @@ function stepSsPcn(cur::mcmcSample, m::mcmcProb, beta::Float64, nProp::Int64; ve
   #copy current value into last entry
   proposals[:,end] = cur.samp;
   pots[end]        = cur.pot;
-  propPots[end]    = -logpdf(m.prior,zeros(length(cur.samp)));
+  #propPots[end]    = -logpdf(m.prior,zeros(length(cur.samp)));
+  #compute the probability of drawing a xi from the prior that takes us back to the current sample
+  # i.e., assume   q = sqrt(1-beta^2)*q + beta*xi
+  # which implies xi = (1 - sqrt(1-beta^2))/beta * q
+  propPots[end]    = -logpdf(m.prior, ((1-sqrt(1-beta^2))/beta).*cur.samp );
 
   #create all proposals
   can = mcmcSample(); #candidate
